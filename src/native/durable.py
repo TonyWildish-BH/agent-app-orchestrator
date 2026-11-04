@@ -61,7 +61,7 @@ def build_worker(config: NativeConfig, worker: Any) -> DurableAIAgentWorker:
     if config.settings is None or config.settings.host != "container_apps":
         raise ValueError("The DTS worker requires ORCHESTRATION_HOST=container_apps.")
     # This is a new, isolated native task hub, not an upgrade/migration engine.
-    runtime = DurableAIAgentWorker(worker, deployment_mode="isolated_v2", process_legacy_entities=False)
+    runtime = DurableAIAgentWorker(worker, deployment_mode="two_phase", process_legacy_entities=False)
     if config.settings.mode in ("conversational", "both"):
         runtime.add_agent(create_agent(config), entity_id=AGENT_NAME)
     if config.settings.mode in ("workflow", "both"):

@@ -67,9 +67,11 @@ def create_agent(
             if toolbox is not None and not any(tool.name == KNOWLEDGE_TOOL for tool in managed):
                 raise ValueError("The configured Toolbox does not expose knowledge_base_retrieve.")
             context.tools = [*managed, *await compose_tools(view, identity, resources)]
+            # Reasoning models reject `temperature`; send it only when explicitly configured.
+            temperature = view.get("CHAT_TEMPERATURE", None, type=float)
             context.options = {
                 **dict(context.options or {}),
-                "temperature": view.get("CHAT_TEMPERATURE", 0.2, type=float),
+                **({"temperature": temperature} if temperature is not None else {}),
                 "max_tokens": view.get("CHAT_OUTPUT_TOKENS", 2048, type=int),
             }
             if context.stream:
